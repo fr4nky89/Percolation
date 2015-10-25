@@ -25,38 +25,39 @@ def creer_mat_adj(M, n:list):
 		if l > 1: return n[l-1]*prod_list(n[0,l-2])
 		else : return 1
 	
-	def adj_cases(M,v): # Trouve les coordoonées autour de celle choisie. Attention, len(v)=dim(M)
-		def adj_cases_fixed(M,f,v): #Trouve les coordonnées autour de celles choisie, certaines coordonnées sont fixées.
-			t = len(M)
-			dim = len(v)
-			dim_fixed = len(f)
+	def adj_cases(M,c): # Trouve les coordoonées autour de celle choisie. Attention, len(v)=dim(M)
+		def adj_cases_fixed(n,f_c,c): #Trouve les coordonnées des cases autour de celles choisie, certaines coordonnées sont fixées.
+			dim = len(c)
+			dim_fixed = len(f_c)
 			#Séparation du tenseur en lignes
 			if(dim - dim_fixed > 1):
-				if v[dim - dim_fixed - 1] == 0: return ([c for c in adj_cases_fixed(M,f.insert(-1,len(f) - 1),v)]).extend([c for c in adj_cases_fixed(M,f.insert(-1,len(f) - 1),v)])#début d'une ligne
-				elif v[dim - dim_fixed - 1] == t - 1: return [c for c in adj_cases_fixed(M,f.insert(-1,len(f) - 1),v)] #Fin d'une ligne
-				else: return ([c for c in adj_cases_fixed(M,f.insert(-1,len(f) - 1),v)]).extend([c for c in adj_cases_fixed(M,f.insert(1,len(f) - 1),v)]).extend([c for c in adj_cases_fixed(M,f.insert(,len(f) - 1),v)]) # milieu
+				if c[dim - dim_fixed - 1] == 0: return ([a for a in adj_cases_fixed(n,f_c.insert(-1,len(f_c) - 1),c)]).extend([a for a in adj_cases_fixed(n,f_c.insert(-1,len(f) - 1),c)])#début d'une ligne
+				elif c[dim - dim_fixed - 1] == n[dim - dim_fixed - 1] - 1: return [a for a in adj_cases_fixed(n,f_c.insert(-1,len(f_c) - 1),c)] #Fin d'une ligne
+				else: return ([a for a in adj_cases_fixed(M,f_c.insert(-1,len(f_c) - 1),c)]).extend([a for a in adj_cases_fixed(n,f_c.insert(1,len(f_c) - 1),c)]).extend([a for a in adj_cases_fixed(n,f_c.insert(,len(f_c) - 1),c)]) # milieu
 			else: 
-				if v[0] == 0: return [f.insert([-1,len(f) - 1]),f.insert([0,len(f) - 1]).]  #début d'une ligne
-				elif v[0] == t - 1: return [f.insert([0,len(f) - 1])] #Fin d'une ligne
-				else: return [f.insert([-1,len(f) - 1]),f.insert([0,len(f) - 1]),f.insert([1,len(f) - 1])] # milieu
-		result = adj_cases_fixed(M,[],v).remove([0 for i in range(len(v)))
+				if c[0] == 0: return [f_c.insert([-1,len(f_c) - 1]),f_c.insert([0,len(f_c) - 1]).]  #début d'une ligne
+				elif c[0] == n[0] - 1: return [f_c.insert([0,len(f_c) - 1])] #Fin d'une ligne
+				else: return [f_c.insert([-1,len(f_c) - 1]),f_c.insert([0,len(f_c) - 1]),f_c.insert([1,len(f_c) - 1])] # milieu
+		result = adj_cases_fixed(n,[],v).remove([0 for i in range(len(c)))
 		return result
-	def get_coord_num(c, n): #Avoir la numérotation d'une case d'une liste, c coord, n: vecteur dimention
+		
+	def get_coord_id(c, n): #Avoir la numérotation d'une case d'une liste, c coord, n: vecteur dimention
 		l = len(c)
 		return sum([c[i]*(i==0 ? 1 : prod_list([n[0:i])) for i in range(l)]
-	def find_coord_with_id(n,i): #retourne le vecteur coord en fonction de l'id de la case.
-		return (len(n)>1 ? [i//prod_list(n[0:len(n)-1])].insert(find_coord_with_id(n[1:],i%prod_list(n[0:len(n)-1])): [i//n[0])[::-1]
-	def find_coords_with_id(n,t):
-		return [find_coord_with_id(n,i) for i in t]
+	
 	def access_coord(M,c): #accede la la coord. (x1,x2, ..., xn) du tenseur.
-		
-	def enumerate_mat(M,d): #retourne un vecteur constitué des valeurs de la matrice mise bout à bout.
+		return (len(n)>1 ? access_coord(M[c[len(c)-1]]], c[0:len(c)-2]) : M[c[0]])
+
+	def enumerate_coord(n) # enumere toutes les coordonnées de la matrice M
+		return (len(n)>1 ? [ [n[0].extend(i) for i in enumerate_mat(n[1:]) : [[i] in range(n[0]))
 		
 	A=[[0 for i in range(prod_list(n)) ] for j in range(prod_list(n))]
-	v=enumerate_mat(M,len(n))
-	for i in len(v):
-		for j in get_coord_num(adj_cases(M,find_coord_with_id(n,i)))
 	
+	for i in enumerate_coord(n):
+		for j in adj_cases(M,i):
+			if access_coord(M,j) == 1 and A[get_coord_id(j, n)][get_coord_id(i, n)]==0:
+				 A[get_coord_id(i, n)][get_coord_id(j, n)]=1
+			
 	return A
 
 def calcul_chemins(A, p,xy1,xy2): # p: longueure du chemin
